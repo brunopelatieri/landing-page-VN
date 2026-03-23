@@ -11,9 +11,11 @@
  */
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import { publicPath } from "./utils/publicPath.js";
+import { trackMetaLead } from "./utils/metaPixel.js";
 
 /* ─── CONSTANTS ─── */
 const WEBHOOK_URL =
@@ -146,6 +148,7 @@ function Carousel({ height }) {
 
 /* ─── MULTI-STEP FORM ─── */
 function MultiStepForm() {
+  const navigate = useNavigate();
   const [step, setStep]           = useState(1);
   const [form, setForm]           = useState({ nome: "", email: "", celular: "", cpf: "" });
   const [sel, setSel]             = useState({ beneficio: "", idade: "", historico: "", situacao: "" });
@@ -179,20 +182,49 @@ function MultiStepForm() {
     if (!sel.historico) e.historico = "Selecione uma opção";
     if (!sel.situacao)  e.situacao  = "Selecione sua situação atual";
     if (Object.keys(e).length) { setErrors(e); return; }
+
+    const qualifiedBenefits = new Set([
+      "INSS aposentado",
+      "Pensionista",
+      "Aposentado por Invalidez (Espécie 32)",
+      "Aposentado por Invalidez (Menos de 55 anos)",
+    ]);
+    const qualifiedAges = new Set([
+      "Até 60 anos",
+      "De 61 a 65 anos",
+      "De 66 a 70 anos",
+      "De 71 a 76 anos",
+    ]);
+    const qualifiedSituations = new Set([
+      "Tenho margem livre e quero contratar agora",
+      "Tenho empréstimos antigos (mais de 1 ano) e quero renovar",
+      "Preciso de um cartão de crédito consignado",
+    ]);
+
+    const isQualified =
+      qualifiedBenefits.has(sel.beneficio) &&
+      qualifiedAges.has(sel.idade) &&
+      qualifiedSituations.has(sel.situacao);
+
     setLoading(true);
     try {
       await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, ...sel }),
+        body: JSON.stringify({ formName: "formINSS", ...form, ...sel }),
         mode: "no-cors",
+      });
+      await trackMetaLead({
+        nome: form.nome,
+        email: form.email,
+        celular: form.celular,
+        cpf: form.cpf,
+        formName: "formINSS",
+        qualified: isQualified,
       });
     } catch (_) {}
     setLoading(false);
-    setStep(1);
-    setForm({ nome: "", email: "", celular: "", cpf: "" });
-    setSel({ beneficio: "", idade: "", historico: "", situacao: "" });
-    setErrors({});
+    navigate(isQualified ? "/obrigado-q" : "/obrigado");
   };
 
   const inputSt = (hasErr) => ({
@@ -288,6 +320,7 @@ function MultiStepForm() {
 
       {/* Form body */}
       <div style={{ padding: "22px 18px 28px" }}>
+        <input type="hidden" name="formName" defaultValue="formINSS" />
         {step === 1 ? (
           <div>
             <div style={{ marginBottom: 19 }}>
@@ -848,3 +881,5 @@ export default function VNPromotora() {
     </>
   );
 }
+
+

@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import VNPromotora    from './VNPromotora.jsx'
 import VNPromotoraCLT from './VNPromotoraCLT.jsx'
 import ObrigadoCLT    from './ObrigadoCLT.jsx'
+import ObrigadoQ      from './ObrigadoQ.jsx'
+import Obrigado      from './Obrigado.jsx'
 
 export default function App() {
   return (
@@ -14,6 +16,8 @@ export default function App() {
         <Route path="/credito-consignado-clt"    element={<VNPromotoraCLT />} />
 
         <Route path="/obrigado-clt"              element={<ObrigadoCLT />} />
+        <Route path="/obrigado-q"                element={<ObrigadoQ />} />
+        <Route path="/obrigado"                element={<Obrigado />} />
 
         {/* Qualquer rota não encontrada redireciona para home */}
         <Route path="*"                          element={<VNPromotora />} />

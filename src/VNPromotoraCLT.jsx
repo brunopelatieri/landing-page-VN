@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import { publicPath } from "./utils/publicPath.js";
+import { trackMetaLead } from "./utils/metaPixel.js";
 
 /* ─── CONSTANTS ─── */
 const WEBHOOK_URL =
@@ -250,6 +251,13 @@ function MultiStepFormCLT() {
           situacao_hoje: sel.situacaoHoje,
         }),
         mode: "no-cors",
+      });
+      await trackMetaLead({
+        nome: form.nome,
+        email: form.email,
+        celular: form.celular,
+        cpf: form.cpf,
+        formName: "formCLT",
       });
     } catch (_) {}
     setLoading(false);
