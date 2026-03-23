@@ -22,7 +22,7 @@ export default function Header() {
           style={{ display: "flex", lineHeight: 0, textDecoration: "none" }}
         >
           <img
-            src="public/images/vn_promotora_vida_nova_logo._top.webp"
+            src="dist/images/vn_promotora_vida_nova_logo._top.webp"
             alt="VN Promotora"
             style={{ height: 46 }}
           />

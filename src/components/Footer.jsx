@@ -23,7 +23,7 @@ export default function Footer({ tagline = DEFAULT_TAGLINE }) {
     >
       <div className="mobile-only">
         <img
-          src="public/images/vn_promotora_vida_nova_logo_white_footer.webp"
+          src="dist/images/vn_promotora_vida_nova_logo_white_footer.webp"
           alt="VN Promotora"
           style={{ height: 56, marginBottom: 20 }}
         />
@@ -62,7 +62,7 @@ export default function Footer({ tagline = DEFAULT_TAGLINE }) {
         <div className="footer-grid" style={{ display: "none" }}>
           <div>
             <img
-              src="public/images/vn_promotora_vida_nova_logo_white_footer.webp"
+              src="dist/images/vn_promotora_vida_nova_logo_white_footer.webp"
               alt="VN Promotora"
               style={{ height: 56, marginBottom: 16 }}
             />

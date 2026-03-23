@@ -3,7 +3,7 @@ import Footer from "./components/Footer.jsx";
 
 const G = "#0a4d2c";
 
-const IMG_THANKS = "public/images/vn_promotora_vida_section_tanks.webp";
+const IMG_THANKS = "dist/images/vn_promotora_vida_section_tanks.webp";
 
 export default function ObrigadoCLT() {
   const css = `
