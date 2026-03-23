@@ -12,6 +12,9 @@
  */
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 
 /* ─── CONSTANTS ─── */
 const WEBHOOK_URL =
@@ -129,7 +132,7 @@ function Carousel({ height }) {
           style={{
             position: "absolute", inset: 0,
             width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "top center",
+            objectFit: "contain", objectPosition: "bottom center",
             opacity: i === slide ? 1 : 0,
             transition: "opacity 0.85s ease",
             zIndex: i === slide ? 1 : 0,
@@ -199,11 +202,11 @@ function FaqItem({ q, a }) {
 
 /* ─── MULTI-STEP FORM CLT ─── */
 function MultiStepFormCLT() {
+  const navigate = useNavigate();
   const [step, setStep]           = useState(1);
   const [form, setForm]           = useState({ nome: "", email: "", celular: "", cpf: "" });
   const [sel, setSel]             = useState({ situacao: "", historico: "", situacaoHoje: "" });
   const [errors, setErrors]       = useState({});
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading]     = useState(false);
 
   const setF = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: "" })); };
@@ -238,6 +241,7 @@ function MultiStepFormCLT() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          formName: "formCLT",
           ...form,
           tipo_pagina: "credito-consignado-clt",
           situacao_clt: sel.situacao,
@@ -248,7 +252,7 @@ function MultiStepFormCLT() {
       });
     } catch (_) {}
     setLoading(false);
-    setSubmitted(true);
+    navigate("/obrigado-clt");
   };
 
   const inputSt = (hasErr) => ({
@@ -342,19 +346,8 @@ function MultiStepFormCLT() {
 
       {/* Body */}
       <div style={{ padding: "22px 18px 28px" }}>
-        {submitted ? (
-          <div style={{ textAlign: "center", padding: "32px 8px" }}>
-            <div style={{ fontSize: 68, marginBottom: 14 }}>✅</div>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 21, fontWeight: 900, color: G, marginBottom: 13 }}>
-              Formulário enviado com sucesso!
-            </h3>
-            <p style={{ fontSize: 15, color: "#4b5563", lineHeight: 1.7 }}>
-              Em breve nossa equipe vai entrar em contato com você pelo WhatsApp.
-              <br /><br />
-              <strong style={{ color: G }}>Obrigado, {form.nome.split(" ")[0]}! 🎉</strong>
-            </p>
-          </div>
-        ) : step === 1 ? (
+        <input type="hidden" name="formName" defaultValue="formCLT" />
+        {step === 1 ? (
           <div>
             {/* Nome */}
             <div style={{ marginBottom: 19 }}>
@@ -401,20 +394,20 @@ function MultiStepFormCLT() {
             <RadioGroup label="Descreva sua situação atual:" optKey="situacao"    options={SITUACOES} />
             <RadioGroup label="Você já pegou consignado CLT antes?" optKey="historico"  options={HISTORICO} />
             <RadioGroup label="Qual a sua situação hoje?"           optKey="situacaoHoje" options={SITUACAO_HOJE} />
-            <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <button onClick={() => setStep(1)} style={{
-                background: "#6b7280", color: "#fff", border: "none", borderRadius: 50,
-                fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 900,
-                cursor: "pointer", padding: "17px 22px", flex: "0 0 auto",
-              }}>← Voltar</button>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
               <button onClick={submit} disabled={loading} style={{
-                flex: 1, padding: 17, background: GA, color: "#fff", border: "none",
+                width: "100%", padding: 17, background: GA, color: "#fff", border: "none",
                 borderRadius: 50, fontFamily: "'Montserrat', sans-serif", fontSize: 16,
                 fontWeight: 900, cursor: loading ? "not-allowed" : "pointer",
                 textTransform: "uppercase", letterSpacing: .5, opacity: loading ? .6 : 1,
               }}>
-                {loading ? "Enviando…" : "Enviar ✅"}
+                {loading ? "Enviando…" : "Concluir"}
               </button>
+              <button onClick={() => setStep(1)} style={{
+                width: "100%", background: "#6b7280", color: "#fff", border: "none", borderRadius: 50,
+                fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 900,
+                cursor: "pointer", padding: 17,
+              }}>← Voltar</button>
             </div>
           </div>
         )}
@@ -442,6 +435,46 @@ export default function VNPromotoraCLT() {
     }
     .pulse { animation: pulse 2s infinite; }
 
+    /* HOW (CLT) — imagem crédito-9 no rodapé; margem/padding inferiores 0 */
+    .how-section-img-wrap {
+      margin: 0;
+      margin-bottom: 0;
+      padding: 0;
+      padding-bottom: 0;
+      line-height: 0;
+    }
+    .how-section-img-wrap img {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      display: block;
+      object-fit: contain;
+      object-position: bottom center;
+      margin: 0;
+      margin-bottom: 0;
+      padding: 0;
+      padding-bottom: 0;
+    }
+    @media (max-width: 959px) {
+      .how-section {
+        display: flex;
+        flex-direction: column;
+        padding: 38px 18px 0 !important;
+      }
+      .how-section-mobile-body {
+        padding-bottom: 26px;
+      }
+      .how-section-img-wrap {
+        width: calc(100% + 36px);
+        max-width: none;
+        margin-left: -18px;
+        margin-right: -18px;
+        padding: 0 15px 0;
+        padding-bottom: 0;
+        align-self: center;
+      }
+    }
+
     /* ══════════════════════════════════
        DESKTOP ≥ 960px
     ══════════════════════════════════ */
@@ -449,7 +482,7 @@ export default function VNPromotoraCLT() {
       .mobile-only  { display: none  !important; }
       .desktop-only { display: block !important; }
 
-      nav { padding: 0 !important; }
+      nav { padding: 10px 0 !important; }
       .nav-inner { max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 60px; justify-content: flex-start !important; }
 
       .hero-grid { display: grid !important; grid-template-columns: 1fr 1fr; min-height: 560px; }
@@ -473,14 +506,36 @@ export default function VNPromotoraCLT() {
       .edu-section  { padding: 84px 0 !important; }
       .edu-inner    { max-width: 1100px; margin: 0 auto; padding: 0 60px;
         display: grid !important; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-      .edu-img-side { min-height: 440px; border-radius: 22px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,.18); }
+      .edu-img-side { min-height: 440px; border-radius: 22px; overflow: hidden; }
       .edu-img-side img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 
-      .how-section  { padding: 84px 0 !important; }
-      .how-inner    { max-width: 1100px; margin: 0 auto; padding: 0 60px;
+      .how-section  { padding: 84px 0 0 !important; }
+      .how-inner    { max-width: 1100px; margin: 0 auto; padding: 0 60px 0;
         display: grid !important; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-      .how-img-side { position: sticky; top: 80px; border-radius: 22px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,.15); }
-      .how-img-side img { width: 100%; display: block; object-fit: cover; }
+      .how-img-side {
+        position: relative;
+        top: auto;
+        align-self: end;
+        margin: 0;
+        margin-bottom: 0;
+        padding: 0;
+        padding-bottom: 0;
+        overflow: visible;
+        border-radius: 0;
+        line-height: 0;
+      }
+      .how-img-side img {
+        width: 100%;
+        height: auto;
+        max-height: none;
+        display: block;
+        object-fit: contain;
+        object-position: bottom center;
+        margin: 0;
+        margin-bottom: 0;
+        padding: 0;
+        padding-bottom: 0;
+      }
 
       .brand-section { padding: 72px 60px !important; }
       .brand-inner   { max-width: 1100px; margin: 0 auto;
@@ -518,26 +573,11 @@ export default function VNPromotoraCLT() {
     "Orientação completa até a liberação do crédito na sua conta",
   ];
 
-  const UNITS = [
-    { city: "📍 Itabaianinha – SE (Matriz)", addr: "Praça Flaviano Peixoto, 19 – Centro" },
-    { city: "📍 Estância – SE",              addr: "Praça Orlando Silva Gomes, 408A – Centro" },
-    { city: "📍 Aracaju – SE",               addr: "Rua Própria, 92 – Centro" },
-  ];
-
   return (
     <>
       <style>{css}</style>
 
-      {/* ════════ NAV ════════ */}
-      <nav style={{ background: G, padding: "11px 20px", display: "flex", alignItems: "center", justifyContent: "center", position: "sticky", top: 0, zIndex: 200, boxShadow: "0 2px 16px rgba(0,0,0,.35)" }}>
-        <div className="nav-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <img
-            src="public/images/vn_promotora_vida_nova_logo._top.webp"
-            alt="VN Promotora"
-            style={{ height: 46 }}
-          />
-        </div>
-      </nav>
+      <Header />
 
       {/* ════════ HERO ════════ */}
       <section style={{ background: G, overflow: "hidden" }}>
@@ -742,7 +782,7 @@ export default function VNPromotoraCLT() {
           <img
             src="public/images/clt/vnpromotora_especializada-credito-8.webp"
             alt="Crédito CLT VN Promotora"
-            style={{ width: "100%", borderRadius: 18, objectFit: "cover", maxHeight: 230, marginBottom: 26, boxShadow: "0 4px 20px rgba(0,0,0,.12)" }}
+            style={{ width: "100%", borderRadius: 18, objectFit: "contain", maxHeight: 230, marginBottom: 26 }}
           />
           {[
             { n: 1, title: "Por que o crédito CLT é ideal para você?",      text: "Se você trabalha com carteira assinada e busca organizar suas finanças ou realizar um projeto, o consignado CLT é a escolha certa. Com ele, você acessa taxas muito menores do que as do cartão de crédito ou cheque especial, garantindo mais fôlego para o seu bolso." },
@@ -788,21 +828,22 @@ export default function VNPromotoraCLT() {
       </section>
 
       {/* ════════ HOW IT WORKS / FAQ ════════ */}
-      <section className="how-section" style={{ background: "#f0fdf4", padding: "38px 18px" }}>
+      <section className="how-section" style={{ background: "#f0fdf4" }}>
         {/* Mobile */}
-        <div className="mobile-only">
+        <div className="mobile-only how-section-mobile-body">
           <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 22, fontWeight: 900, color: G, marginBottom: 24, lineHeight: 1.3 }}>
             Como funciona o processo (passo a passo)
           </h2>
-          <img
-            src="public/images/clt/vnpromotora_especializada-credito-9.webp"
-            alt="Como funciona CLT"
-            style={{ width: "100%", borderRadius: 18, objectFit: "cover", maxHeight: 230, marginBottom: 26, boxShadow: "0 4px 20px rgba(0,0,0,.1)" }}
-          />
           {FAQ_ITEMS.map((item) => <FaqItem key={item.q} q={item.q} a={item.a} />)}
           <div style={{ marginTop: 26 }}>
             <a href="#form-anchor-clt" style={btnDark}>🔒 GARANTIR MEU CRÉDITO</a>
           </div>
+        </div>
+        <div className="mobile-only how-section-img-wrap">
+          <img
+            src="public/images/clt/vnpromotora_especializada-credito-9.webp"
+            alt="Como funciona CLT"
+          />
         </div>
 
         {/* Desktop */}
@@ -846,61 +887,7 @@ export default function VNPromotoraCLT() {
         </div>
       </section>
 
-      {/* ════════ FOOTER ════════ */}
-      <footer className="footer-outer" style={{ background: "#051f10", padding: "32px 18px 26px", color: "rgba(255,255,255,.78)" }}>
-        {/* Mobile */}
-        <div className="mobile-only">
-          <img
-            src="public/images/vn_promotora_vida_nova_logo_white_footer.webp"
-            alt="VN Promotora"
-            style={{ height: 56, marginBottom: 20 }}
-          />
-          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 13, fontWeight: 900, color: GA, marginBottom: 4, letterSpacing: .5 }}>VN PROMOTORA</p>
-          <p style={{ fontSize: 13, marginBottom: 6 }}>CNPJ: 23.529.979/0001-95</p>
-          <p style={{ fontSize: 14, marginBottom: 20, fontWeight: 600 }}>📅 Seg–Sex: 08h–18h</p>
-          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 14 }}>Nossas Unidades</p>
-          {UNITS.map(({ city, addr }) => (
-            <div key={city} style={{ marginBottom: 14 }}>
-              <p style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{city}</p>
-              <p style={{ fontSize: 13, marginTop: 2 }}>{addr}</p>
-            </div>
-          ))}
-          <p style={{ textAlign: "center", fontSize: 11, color: "rgba(255,255,255,.36)", marginTop: 24, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,.1)", lineHeight: 1.75 }}>
-            © 2025 VN PROMOTORA – TODOS OS DIREITOS RESERVADOS<br />
-            Especialistas em Crédito Consignado INSS e CLT e Pré-Digitação para Aumento Salarial 2026
-          </p>
-        </div>
-
-        {/* Desktop */}
-        <div className="footer-inner desktop-only" style={{ display: "none" }}>
-          <div className="footer-grid" style={{ display: "none" }}>
-            <div>
-              <img src="public/images/vn_promotora_vida_nova_logo_white_footer.webp" alt="VN Promotora" style={{ height: 56, marginBottom: 16 }} />
-              <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 13, fontWeight: 900, color: GA, marginBottom: 4, letterSpacing: .5 }}>VN PROMOTORA</p>
-              <p style={{ fontSize: 13, marginBottom: 6 }}>CNPJ: 23.529.979/0001-95</p>
-              <p style={{ fontSize: 14, marginTop: 10, fontWeight: 600 }}>📅 Seg–Sex: 08h–18h</p>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,.5)", marginTop: 14, lineHeight: 1.6 }}>
-                Especialistas em Crédito Consignado INSS e CLT e Pré-Digitação para Aumento Salarial 2026
-              </p>
-            </div>
-            {[
-              { city: "📍 Itabaianinha – SE", badge: "MATRIZ", lines: ["Praça Flaviano Peixoto, 19", "Centro"] },
-              { city: "📍 Estância – SE",    badge: null,      lines: ["Praça Orlando Silva Gomes, 408A", "Centro"] },
-              { city: "📍 Aracaju – SE",     badge: null,      lines: ["Rua Própria, 92", "Centro"] },
-            ].map(({ city, badge, lines }) => (
-              <div key={city}>
-                <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 12, lineHeight: 1.5 }}>
-                  {city}{badge && <><br /><span style={{ color: GA, fontSize: 12 }}>{badge}</span></>}
-                </p>
-                {lines.map((line) => <p key={line} style={{ fontSize: 13, marginBottom: 4 }}>{line}</p>)}
-              </div>
-            ))}
-          </div>
-          <p style={{ fontSize: 11, color: "rgba(255,255,255,.36)", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,.1)", lineHeight: 1.75 }}>
-            © 2025 VN PROMOTORA – TODOS OS DIREITOS RESERVADOS. Especialistas em Crédito Consignado INSS e CLT e Pré-Digitação para Aumento Salarial 2026
-          </p>
-        </div>
-      </footer>
+      <Footer tagline="Especialistas em Crédito Consignado INSS e CLT e Pré-Digitação para Aumento Salarial 2026" />
     </>
   );
 }

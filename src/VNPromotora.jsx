@@ -11,6 +11,8 @@
  */
 
 import { useState, useEffect } from "react";
+import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 
 /* ─── CONSTANTS ─── */
 const WEBHOOK_URL =
@@ -21,7 +23,6 @@ const CAROUSEL_IMAGES = [
   "public/images/carousel_02.webp",
   "public/images/carousel_03.webp",
   "public/images/carousel_04.webp",
-  "public/images/carousel_05.webp",
 ];
 
 const BENEFITS = [
@@ -69,6 +70,29 @@ function maskPhone(v) {
   return v;
 }
 
+function maskCPF(v) {
+  v = v.replace(/\D/g, "").slice(0, 11);
+  if (v.length > 9) return v.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})/, "$1.$2.$3-$4");
+  if (v.length > 6) return v.replace(/^(\d{3})(\d{3})(\d{0,3})/, "$1.$2.$3");
+  if (v.length > 3) return v.replace(/^(\d{3})(\d{0,3})/, "$1.$2");
+  return v;
+}
+
+function validateCPF(cpf) {
+  cpf = cpf.replace(/\D/g, "");
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(cpf[i]) * (10 - i);
+  let r = (sum * 10) % 11;
+  if (r === 10 || r === 11) r = 0;
+  if (r !== parseInt(cpf[9])) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(cpf[i]) * (11 - i);
+  r = (sum * 10) % 11;
+  if (r === 10 || r === 11) r = 0;
+  return r === parseInt(cpf[10]);
+}
+
 /* ─── CAROUSEL ─── */
 function Carousel({ height }) {
   const [slide, setSlide] = useState(0);
@@ -88,7 +112,7 @@ function Carousel({ height }) {
           style={{
             position: "absolute", inset: 0,
             width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "top center",
+            objectFit: "contain", objectPosition: "bottom center",
             opacity: i === slide ? 1 : 0,
             transition: "opacity 0.85s ease",
             zIndex: i === slide ? 1 : 0,
@@ -122,10 +146,9 @@ function Carousel({ height }) {
 /* ─── MULTI-STEP FORM ─── */
 function MultiStepForm() {
   const [step, setStep]           = useState(1);
-  const [form, setForm]           = useState({ nome: "", email: "", celular: "" });
+  const [form, setForm]           = useState({ nome: "", email: "", celular: "", cpf: "" });
   const [sel, setSel]             = useState({ beneficio: "", idade: "", historico: "", situacao: "" });
   const [errors, setErrors]       = useState({});
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading]     = useState(false);
 
   const setF = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: "" })); };
@@ -136,6 +159,7 @@ function MultiStepForm() {
     if (!form.nome.trim() || form.nome.trim().split(" ").length < 2) e.nome = "Digite seu nome completo";
     if (!form.email.includes("@") || !form.email.includes(".")) e.email = "E-mail inválido";
     if (form.celular.replace(/\D/g, "").length < 10) e.celular = "Celular inválido";
+    if (!validateCPF(form.cpf)) e.cpf = "CPF inválido";
     return e;
   };
 
@@ -164,7 +188,10 @@ function MultiStepForm() {
       });
     } catch (_) {}
     setLoading(false);
-    setSubmitted(true);
+    setStep(1);
+    setForm({ nome: "", email: "", celular: "", cpf: "" });
+    setSel({ beneficio: "", idade: "", historico: "", situacao: "" });
+    setErrors({});
   };
 
   const inputSt = (hasErr) => ({
@@ -260,20 +287,7 @@ function MultiStepForm() {
 
       {/* Form body */}
       <div style={{ padding: "22px 18px 28px" }}>
-        {submitted ? (
-          <div style={{ textAlign: "center", padding: "32px 8px" }}>
-            <div style={{ fontSize: 68, marginBottom: 14 }}>✅</div>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 21, fontWeight: 900, color: G, marginBottom: 13 }}>
-              Formulário enviado com sucesso!
-            </h3>
-            <p style={{ fontSize: 15, color: "#4b5563", lineHeight: 1.7 }}>
-              Em breve nossa equipe vai entrar em contato com você pelo WhatsApp.
-              <br /><br />
-              <strong style={{ color: G }}>Obrigado, {form.nome.split(" ")[0]}! 🎉</strong>
-            </p>
-          </div>
-
-        ) : step === 1 ? (
+        {step === 1 ? (
           <div>
             <div style={{ marginBottom: 19 }}>
               <label style={{ display: "block", fontSize: 15, fontWeight: 800, color: G, marginBottom: 7 }}>Nome Completo *</label>
@@ -287,7 +301,7 @@ function MultiStepForm() {
                 value={form.email} onChange={(e) => setF("email", e.target.value)} />
               {errors.email && <p style={{ color: "#dc2626", fontSize: 13, marginTop: 5, fontWeight: 700 }}>⚠ {errors.email}</p>}
             </div>
-            <div style={{ marginBottom: 28 }}>
+            <div style={{ marginBottom: 19 }}>
               <label style={{ display: "block", fontSize: 15, fontWeight: 800, color: G, marginBottom: 7 }}>Celular / WhatsApp *</label>
               <input
                 style={inputSt(!!errors.celular)}
@@ -295,6 +309,15 @@ function MultiStepForm() {
                 value={form.celular} onChange={(e) => setF("celular", maskPhone(e.target.value))}
               />
               {errors.celular && <p style={{ color: "#dc2626", fontSize: 13, marginTop: 5, fontWeight: 700 }}>⚠ {errors.celular}</p>}
+            </div>
+            <div style={{ marginBottom: 28 }}>
+              <label style={{ display: "block", fontSize: 15, fontWeight: 800, color: G, marginBottom: 7 }}>CPF *</label>
+              <input
+                style={inputSt(!!errors.cpf)}
+                type="text" placeholder="000.000.000-00" inputMode="numeric" autoComplete="off"
+                value={form.cpf} onChange={(e) => setF("cpf", maskCPF(e.target.value))}
+              />
+              {errors.cpf && <p style={{ color: "#dc2626", fontSize: 13, marginTop: 5, fontWeight: 700 }}>⚠ {errors.cpf}</p>}
             </div>
             <button onClick={goNext} style={{
               width: "100%", padding: 17, background: GA, color: "#fff", border: "none",
@@ -309,20 +332,20 @@ function MultiStepForm() {
             <RadioGroup label="Qual sua idade hoje?"                     optKey="idade"     options={AGES} />
             <RadioGroup label="Quando foi a última vez que você contratou ou renovou um empréstimo consignado?" optKey="historico" options={LOAN_HISTORY} />
             <RadioGroup label="Qual a sua situação hoje?"                optKey="situacao"  options={SITUATIONS} />
-            <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <button onClick={() => setStep(1)} style={{
-                background: "#6b7280", color: "#fff", border: "none", borderRadius: 50,
-                fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 900,
-                cursor: "pointer", padding: "17px 22px", flex: "0 0 auto",
-              }}>← Voltar</button>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
               <button onClick={submit} disabled={loading} style={{
-                flex: 1, padding: 17, background: GA, color: "#fff", border: "none",
+                width: "100%", padding: 17, background: GA, color: "#fff", border: "none",
                 borderRadius: 50, fontFamily: "'Montserrat', sans-serif", fontSize: 16,
                 fontWeight: 900, cursor: loading ? "not-allowed" : "pointer",
                 textTransform: "uppercase", letterSpacing: .5, opacity: loading ? .6 : 1,
               }}>
-                {loading ? "Enviando…" : "Enviar ✅"}
+                {loading ? "Enviando…" : "Concluir"}
               </button>
+              <button onClick={() => setStep(1)} style={{
+                width: "100%", background: "#6b7280", color: "#fff", border: "none", borderRadius: 50,
+                fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 900,
+                cursor: "pointer", padding: 17,
+              }}>← Voltar</button>
             </div>
           </div>
         )}
@@ -345,11 +368,54 @@ export default function VNPromotora() {
     .mobile-only  { display: block; }
     .desktop-only { display: none;  }
 
+    /* HERO — mobile: carrossel no rodapé da section */
+    @media (max-width: 959px) {
+      .hero-section {
+        display: flex;
+        flex-direction: column;
+      }
+      .hero-section > .hero-grid {
+        flex: 1 1 auto;
+      }
+    }
+
     @keyframes pulse {
       0%,100% { box-shadow: 0 0 0 0   rgba(34,197,94,.45); }
       50%      { box-shadow: 0 0 0 14px rgba(34,197,94,0);  }
     }
     .pulse { animation: pulse 2s infinite; }
+
+    /* HOW — imagem no rodapé, sem margem/padding no bloco da foto; exibição inteira (sem crop) */
+    .how-section-img-wrap {
+      margin: 0;
+      padding: 0;
+      line-height: 0;
+    }
+    .how-section-img-wrap img {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      display: block;
+      object-fit: contain;
+      object-position: bottom center;
+    }
+    @media (max-width: 959px) {
+      .how-section {
+        display: flex;
+        flex-direction: column;
+        padding: 38px 18px 0 !important;
+      }
+      .how-section-mobile-body {
+        padding-bottom: 26px;
+      }
+      .how-section-img-wrap {
+        width: calc(100% + 36px);
+        max-width: none;
+        margin-left: -18px;
+        margin-right: -18px;
+        align-self: center;
+      }
+    }
 
     /* ══════════════════════════════════════
        DESKTOP  ≥ 960 px
@@ -359,7 +425,7 @@ export default function VNPromotora() {
       .desktop-only { display: block !important; }
 
       /* NAV */
-      nav { padding: 0 !important; }
+      nav { padding: 10px 0 !important; }
       .nav-inner { max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 60px; justify-content: flex-start !important; }
 
       /* HERO */
@@ -367,7 +433,12 @@ export default function VNPromotora() {
       .hero-left { min-height: 560px !important; padding: 64px 60px 60px 64px !important; justify-content: center; }
       .hero-left h1 { font-size: 42px !important; }
       .hero-left p  { font-size: 17px !important; }
-      .hero-right-col { display: flex !important; min-height: 560px; }
+      .hero-right-col {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: flex-end;
+        min-height: 560px;
+      }
 
       /* ALERT */
       .alert-desktop { max-width: 1100px; margin: 0 auto; padding: 44px 60px;
@@ -388,16 +459,31 @@ export default function VNPromotora() {
       .edu-section  { padding: 84px 0 !important; }
       .edu-inner    { max-width: 1100px; margin: 0 auto; padding: 0 60px;
         display: grid !important; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-      .edu-img-side { min-height: 440px; border-radius: 22px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,.18); }
+      .edu-img-side { min-height: 440px; border-radius: 22px; overflow: hidden; }
       .edu-img-side img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 
       /* HOW */
-      .how-section  { padding: 84px 0 !important; }
-      .how-inner    { max-width: 1100px; margin: 0 auto; padding: 0 60px;
+      .how-section  { padding: 84px 0 0 !important; }
+      .how-inner    { max-width: 1100px; margin: 0 auto; padding: 0 60px 0;
         display: grid !important; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-      .how-img-side { position: sticky; top: 80px; border-radius: 22px; overflow: hidden;
-        box-shadow: 0 8px 40px rgba(0,0,0,.15); }
-      .how-img-side img { width: 100%; display: block; object-fit: cover; }
+      .how-img-side {
+        position: relative;
+        top: auto;
+        align-self: end;
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+        border-radius: 0;
+        line-height: 0;
+      }
+      .how-img-side img {
+        width: 100%;
+        height: auto;
+        max-height: none;
+        display: block;
+        object-fit: contain;
+        object-position: bottom center;
+      }
 
       /* BRAND */
       .brand-section { padding: 72px 60px !important; }
@@ -443,29 +529,14 @@ export default function VNPromotora() {
     "Você recebe orientações claras e sem complicação até a liberação do crédito",
   ];
 
-  const UNITS = [
-    { city: "📍 Itabaianinha – SE (Matriz)", addr: "Praça Flaviano Peixoto, 19 – Centro" },
-    { city: "📍 Estância – SE",              addr: "Praça Orlando Silva Gomes, 408A – Centro" },
-    { city: "📍 Aracaju – SE",               addr: "Rua Própria, 92 – Centro" },
-  ];
-
   return (
     <>
       <style>{css}</style>
 
-      {/* ════════ NAV ════════ */}
-      <nav style={{ background: G, padding: "11px 20px", display: "flex", alignItems: "center", justifyContent: "center", position: "sticky", top: 0, zIndex: 200, boxShadow: "0 2px 16px rgba(0,0,0,.35)" }}>
-        <div className="nav-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <img
-            src="public/images/vn_promotora_vida_nova_logo._top.webp"
-            alt="VN Promotora"
-            style={{ height: 46 }}
-          />
-        </div>
-      </nav>
+      <Header />
 
       {/* ════════ HERO ════════ */}
-      <section style={{ background: G, overflow: "hidden" }}>
+      <section className="hero-section" style={{ background: G, overflow: "hidden" }}>
         <div className="hero-grid" style={{ position: "relative" }}>
 
           {/* Left: headline + CTA */}
@@ -657,7 +728,7 @@ export default function VNPromotora() {
           <img
             src="public/images/vn_promotora_vida_first.webp"
             alt="Atendimento VN Promotora"
-            style={{ width: "100%", borderRadius: 18, objectFit: "cover", maxHeight: 230, marginBottom: 26, boxShadow: "0 4px 20px rgba(0,0,0,.12)" }}
+            style={{ width: "100%", borderRadius: 18, objectFit: "contain", maxHeight: 230, marginBottom: 26 }}
           />
           {EDU_ITEMS.map((item, i) => (
             <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 26 }}>
@@ -699,17 +770,12 @@ export default function VNPromotora() {
       </section>
 
       {/* ════════ HOW IT WORKS ════════ */}
-      <section className="how-section" style={{ background: "#f0fdf4", padding: "38px 18px" }}>
+      <section className="how-section" style={{ background: "#f0fdf4" }}>
         {/* Mobile */}
-        <div className="mobile-only">
+        <div className="mobile-only how-section-mobile-body">
           <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 22, fontWeight: 900, color: G, marginBottom: 24, lineHeight: 1.3 }}>
             Como funciona o processo (passo a passo)
           </h2>
-          <img
-            src="public/images/vn_promotora_vida_section_last.webp"
-            alt="Como funciona a VN Promotora"
-            style={{ width: "100%", borderRadius: 18, objectFit: "cover", maxHeight: 230, marginBottom: 26, boxShadow: "0 4px 20px rgba(0,0,0,.1)" }}
-          />
           {HOW_ITEMS.map((text, i) => (
             <div key={i} style={{ background: "#fff", borderRadius: 15, padding: "17px 15px", marginBottom: 11, display: "flex", alignItems: "flex-start", gap: 15, boxShadow: "0 2px 12px rgba(0,0,0,.07)", borderLeft: `5px solid ${GA}` }}>
               <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 27, fontWeight: 900, color: GA, lineHeight: 1, flexShrink: 0 }}>{i + 1}</div>
@@ -719,6 +785,12 @@ export default function VNPromotora() {
           <div style={{ marginTop: 26 }}>
             <a href="#form-anchor" style={btnDark}>🔒 GARANTIR MINHA PRÉ-DIGITAÇÃO</a>
           </div>
+        </div>
+        <div className="mobile-only how-section-img-wrap">
+          <img
+            src="public/images/vn_promotora_vida_section_last.webp"
+            alt="Como funciona a VN Promotora"
+          />
         </div>
 
         {/* Desktop */}
@@ -736,7 +808,7 @@ export default function VNPromotora() {
                 <p style={{ fontSize: 15, fontWeight: 700, color: "#374151", lineHeight: 1.55, paddingTop: 4 }}>{text}</p>
               </div>
             ))}
-            <div style={{ marginTop: 28 }}>
+            <div style={{ marginTop: 28, marginBottom: 28 }}>
               <a href="#form-anchor" style={{ ...btnDark, maxWidth: 360 }}>🔒 GARANTIR MINHA PRÉ-DIGITAÇÃO</a>
             </div>
           </div>
@@ -771,65 +843,7 @@ export default function VNPromotora() {
         </div>
       </section>
 
-      {/* ════════ FOOTER ════════ */}
-      <footer className="footer-outer" style={{ background: "#051f10", padding: "32px 18px 26px", color: "rgba(255,255,255,.78)" }}>
-        {/* Mobile */}
-        <div className="mobile-only">
-          <img
-            src="public/images/vn_promotora_vida_nova_logo_white_footer.webp"
-            alt="VN Promotora"
-            style={{ height: 56, marginBottom: 20 }}
-          />
-          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 13, fontWeight: 900, color: GA, marginBottom: 4, letterSpacing: .5 }}>VN PROMOTORA</p>
-          <p style={{ fontSize: 13, marginBottom: 6 }}>CNPJ: 23.529.979/0001-95</p>
-          <p style={{ fontSize: 14, marginBottom: 20, fontWeight: 600 }}>📅 Seg–Sex: 08h–18h</p>
-          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 14 }}>Nossas Unidades</p>
-          {UNITS.map(({ city, addr }) => (
-            <div key={city} style={{ marginBottom: 14 }}>
-              <p style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{city}</p>
-              <p style={{ fontSize: 13, marginTop: 2 }}>{addr}</p>
-            </div>
-          ))}
-          <p style={{ textAlign: "center", fontSize: 11, color: "rgba(255,255,255,.36)", marginTop: 24, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,.1)", lineHeight: 1.75 }}>
-            © 2025 VN PROMOTORA – TODOS OS DIREITOS RESERVADOS<br />
-            Especialistas em Crédito Consignado INSS e Pré-Digitação para Aumento Salarial 2026
-          </p>
-        </div>
-
-        {/* Desktop */}
-        <div className="footer-inner desktop-only" style={{ display: "none" }}>
-          <div className="footer-grid" style={{ display: "none" }}>
-            <div>
-              <img
-                src="public/images/vn_promotora_vida_nova_logo_white_footer.webp"
-                alt="VN Promotora"
-                style={{ height: 56, marginBottom: 16 }}
-              />
-              <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 13, fontWeight: 900, color: GA, marginBottom: 4, letterSpacing: .5 }}>VN PROMOTORA</p>
-              <p style={{ fontSize: 13, marginBottom: 6 }}>CNPJ: 23.529.979/0001-95</p>
-              <p style={{ fontSize: 14, marginTop: 10, fontWeight: 600 }}>📅 Seg–Sex: 08h–18h</p>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,.5)", marginTop: 14, lineHeight: 1.6 }}>
-                Especialistas em Crédito Consignado INSS e Pré-Digitação para Aumento Salarial 2026
-              </p>
-            </div>
-            {[
-              { city: "📍 Itabaianinha – SE", badge: "MATRIZ", lines: ["Praça Flaviano Peixoto, 19", "Centro"] },
-              { city: "📍 Estância – SE",    badge: null,      lines: ["Praça Orlando Silva Gomes, 408A", "Centro"] },
-              { city: "📍 Aracaju – SE",     badge: null,      lines: ["Rua Própria, 92", "Centro"] },
-            ].map(({ city, badge, lines }) => (
-              <div key={city}>
-                <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 12, lineHeight: 1.5 }}>
-                  {city}{badge && <><br /><span style={{ color: GA, fontSize: 12 }}>{badge}</span></>}
-                </p>
-                {lines.map((line) => <p key={line} style={{ fontSize: 13, marginBottom: 4 }}>{line}</p>)}
-              </div>
-            ))}
-          </div>
-          <p style={{ fontSize: 11, color: "rgba(255,255,255,.36)", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,.1)", lineHeight: 1.75 }}>
-            © 2025 VN PROMOTORA – TODOS OS DIREITOS RESERVADOS. Especialistas em Crédito Consignado INSS e Pré-Digitação para Aumento Salarial 2026
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
