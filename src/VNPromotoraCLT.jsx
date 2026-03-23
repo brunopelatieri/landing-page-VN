@@ -4,27 +4,28 @@
  * Mobile: < 960px  |  Desktop: ≥ 960px
  *
  * Imagens — caminhos exatos:
- *   Carrossel    → dist/images/clt/vnpromotora_especializada-credito-1.webp … -7.webp
- *   Seção edu    → dist/images/clt/vnpromotora_especializada-credito-8.webp
- *   Como funciona→ dist/images/clt/vnpromotora_especializada-credito-9.webp
- *   Logo topo    → dist/images/vn_promotora_vida_nova_logo._top.webp
- *   Logo rodapé  → dist/images/vn_promotora_vida_nova_logo_white_footer.webp
+ *   Carrossel    → public/images/clt/vnpromotora_especializada-credito-1.webp … -7.webp
+ *   Seção edu    → public/images/clt/vnpromotora_especializada-credito-8.webp
+ *   Como funciona→ public/images/clt/vnpromotora_especializada-credito-9.webp
+ *   Logo topo    → public/images/vn_promotora_vida_nova_logo._top.webp
+ *   Logo rodapé  → public/images/vn_promotora_vida_nova_logo_white_footer.webp
  */
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
+import { publicPath } from "./utils/publicPath.js";
 
 /* ─── CONSTANTS ─── */
 const WEBHOOK_URL =
   "https://webhook.chatdevendas.online/webhook/9b66c4a2-c78a-4373-8d0e-bf90efea88c9-form";
 
 const CAROUSEL_IMAGES = [
-  "dist/images/clt/vnpromotora_especializada-credito-1.webp",
-  "dist/images/clt/vnpromotora_especializada-credito-5.webp",
-  "dist/images/clt/vnpromotora_especializada-credito-6.webp",
-  "dist/images/clt/vnpromotora_especializada-credito-7.webp",
+  publicPath("images/clt/vnpromotora_especializada-credito-1.webp"),
+  publicPath("images/clt/vnpromotora_especializada-credito-5.webp"),
+  publicPath("images/clt/vnpromotora_especializada-credito-6.webp"),
+  publicPath("images/clt/vnpromotora_especializada-credito-7.webp"),
 ];
 
 const SITUACOES = [
@@ -780,7 +781,7 @@ export default function VNPromotoraCLT() {
             O que você precisa saber
           </h2>
           <img
-            src="dist/images/clt/vnpromotora_especializada-credito-8.webp"
+            src={publicPath("images/clt/vnpromotora_especializada-credito-8.webp")}
             alt="Crédito CLT VN Promotora"
             style={{ width: "100%", borderRadius: 18, objectFit: "contain", maxHeight: 230, marginBottom: 26 }}
           />
@@ -822,7 +823,7 @@ export default function VNPromotoraCLT() {
             <a href="#form-anchor-clt" style={{ ...btnDark, maxWidth: 380 }}>💳 QUERO MEU CRÉDITO CLT</a>
           </div>
           <div className="edu-img-side">
-            <img src="dist/images/clt/vnpromotora_especializada-credito-8.webp" alt="Crédito CLT VN Promotora" />
+            <img src={publicPath("images/clt/vnpromotora_especializada-credito-8.webp")} alt="Crédito CLT VN Promotora" />
           </div>
         </div>
       </section>
@@ -841,7 +842,7 @@ export default function VNPromotoraCLT() {
         </div>
         <div className="mobile-only how-section-img-wrap">
           <img
-            src="dist/images/clt/vnpromotora_especializada-credito-9.webp"
+            src={publicPath("images/clt/vnpromotora_especializada-credito-9.webp")}
             alt="Como funciona CLT"
           />
         </div>
@@ -861,7 +862,7 @@ export default function VNPromotoraCLT() {
             </div>
           </div>
           <div className="how-img-side">
-            <img src="dist/images/clt/vnpromotora_especializada-credito-9.webp" alt="Como funciona CLT" />
+            <img src={publicPath("images/clt/vnpromotora_especializada-credito-9.webp")} alt="Como funciona CLT" />
           </div>
         </div>
       </section>

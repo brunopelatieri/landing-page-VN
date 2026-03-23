@@ -68,7 +68,7 @@ npm run preview
 2. Acesse o **Gerenciador de Arquivos** ou use FTP (FileZilla)
 3. Faça upload de **todo o conteúdo da pasta `dist/`** para a raiz do domínio (`public_html/`)
 4. O arquivo `.htaccess` já está incluído no `dist/` e configura o roteamento SPA automaticamente
-5. A pasta `dist/images/` já está em produção — **não apague**
+5. A pasta `public/images/` já está em produção — **não apague**
 
 > ⚠️ O upload é do **conteúdo** de `dist/`, não da pasta `dist/` em si.
 
@@ -120,7 +120,7 @@ const WEBHOOK_URL =
 ```
 
 ### Imagens
-Todas as imagens devem estar em `dist/images/` (já em produção).
+Todas as imagens devem estar em `public/images/` (já em produção).
 O Vite copia automaticamente o conteúdo de `public/` para `dist/` durante o build.
 
 ### Responsividade

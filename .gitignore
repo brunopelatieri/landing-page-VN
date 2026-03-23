@@ -4,8 +4,8 @@ node_modules/
 .pnp.js
 
 # Build
-#dist/
-#dist-ssr/
+dist/
+dist-ssr/
 
 # Logs
 npm-debug.log*

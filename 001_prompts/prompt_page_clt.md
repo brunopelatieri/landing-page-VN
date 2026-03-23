@@ -19,10 +19,10 @@ Siga o prompt em anexo
 
 Na section hero, faça:
 Crie um carrossel com as imagens na pasta:
-    1 - dist/images/clt/vnpromotora_especializada-credito-1.webp
-    2 - dist/images/clt/vnpromotora_especializada-credito-5.webp
-    3 - dist/images/clt/vnpromotora_especializada-credito-6.webp
-    4 - dist/images/clt/vnpromotora_especializada-credito-7.webp
+    1 - public/images/clt/vnpromotora_especializada-credito-1.webp
+    2 - public/images/clt/vnpromotora_especializada-credito-5.webp
+    3 - public/images/clt/vnpromotora_especializada-credito-6.webp
+    4 - public/images/clt/vnpromotora_especializada-credito-7.webp
 
 ---
 
@@ -139,7 +139,7 @@ Mandatory in the form:
 > A VN Promotora utiliza sua expertise de mais de 20 anos no mercado financeiro para oferecer as melhores soluções para trabalhadores do setor privado, priorizando a transparência, a segurança dos dados e um atendimento humanizado.
 
 Ilustre com a imagens na pasta:
-    - dist/images/clt/vnpromotora_especializada-credito-8.webp
+    - public/images/clt/vnpromotora_especializada-credito-8.webp
 
 ---
 
@@ -162,7 +162,7 @@ Ilustre com a imagens na pasta:
 > GARANTIR MEU CRÉDITO
 
 Ilustre com a imagens na pasta:
-    - dist/images/clt/vnpromotora_especializada-credito-9.webp
+    - public/images/clt/vnpromotora_especializada-credito-9.webp
 
 ---
 

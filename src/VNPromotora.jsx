@@ -3,26 +3,27 @@
  * Mobile: < 960px  |  Desktop: ≥ 960px
  *
  * Imagens — caminhos exatos conforme estrutura do projeto:
- *   Logo topo    → dist/images/vn_promotora_vida_nova_logo._top.webp
- *   Carrossel    → dist/images/carousel_01.webp … carousel_05.webp
- *   Seção edu    → dist/images/vn_promotora_vida_first.webp
- *   Como funciona→ dist/images/vn_promotora_vida_section_last.webp
- *   Logo rodapé  → dist/images/vn_promotora_vida_nova_logo_white_footer.webp
+ *   Logo topo    → public/images/vn_promotora_vida_nova_logo._top.webp
+ *   Carrossel    → public/images/carousel_01.webp … carousel_05.webp
+ *   Seção edu    → public/images/vn_promotora_vida_first.webp
+ *   Como funciona→ public/images/vn_promotora_vida_section_last.webp
+ *   Logo rodapé  → public/images/vn_promotora_vida_nova_logo_white_footer.webp
  */
 
 import { useState, useEffect } from "react";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
+import { publicPath } from "./utils/publicPath.js";
 
 /* ─── CONSTANTS ─── */
 const WEBHOOK_URL =
   "https://webhook.chatdevendas.online/webhook/9b66c4a2-c78a-4373-8d0e-bf90efea88c9-form";
 
 const CAROUSEL_IMAGES = [
-  "dist/images/carousel_01.webp",
-  "dist/images/carousel_02.webp",
-  "dist/images/carousel_03.webp",
-  "dist/images/carousel_04.webp",
+  publicPath("images/carousel_01.webp"),
+  publicPath("images/carousel_02.webp"),
+  publicPath("images/carousel_03.webp"),
+  publicPath("images/carousel_04.webp"),
 ];
 
 const BENEFITS = [
@@ -726,7 +727,7 @@ export default function VNPromotora() {
             O que você precisa saber
           </h2>
           <img
-            src="dist/images/vn_promotora_vida_first.webp"
+            src={publicPath("images/vn_promotora_vida_first.webp")}
             alt="Atendimento VN Promotora"
             style={{ width: "100%", borderRadius: 18, objectFit: "contain", maxHeight: 230, marginBottom: 26 }}
           />
@@ -762,7 +763,7 @@ export default function VNPromotora() {
           {/* Image */}
           <div className="edu-img-side">
             <img
-              src="dist/images/vn_promotora_vida_first.webp"
+              src={publicPath("images/vn_promotora_vida_first.webp")}
               alt="Atendimento VN Promotora"
             />
           </div>
@@ -788,7 +789,7 @@ export default function VNPromotora() {
         </div>
         <div className="mobile-only how-section-img-wrap">
           <img
-            src="dist/images/vn_promotora_vida_section_last.webp"
+            src={publicPath("images/vn_promotora_vida_section_last.webp")}
             alt="Como funciona a VN Promotora"
           />
         </div>
@@ -815,7 +816,7 @@ export default function VNPromotora() {
           {/* Sticky image */}
           <div className="how-img-side">
             <img
-              src="dist/images/vn_promotora_vida_section_last.webp"
+              src={publicPath("images/vn_promotora_vida_section_last.webp")}
               alt="Como funciona a VN Promotora"
             />
           </div>

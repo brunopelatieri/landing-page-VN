@@ -20,7 +20,7 @@ O texto e esquema será mantido o mesmo, veja abaixo:
 # Estrutura da Landing Page (por Section) O texto e esquema será mantido o mesmo, veja abaixo:
 
 Logo oficial VN Promotora na pasta:
-    - dist/images/vn_promotora_vida_nova_logo._top.webp
+    - public/images/vn_promotora_vida_nova_logo._top.webp
 
 ## 1. 🟢 Hero (Above the Fold)
 
@@ -35,11 +35,11 @@ Logo oficial VN Promotora na pasta:
 
 Na section hero, faça:
 Crie um carrossel com as imagens na pasta:
-    1 - dist/images/carousel_01.webp
-    2 - dist/images/carousel_02.webp
-    3 - dist/images/carousel_03.webp
-    4 - dist/images/carousel_04.webp
-    5 - dist/images/carousel_05.webp
+    1 - public/images/carousel_01.webp
+    2 - public/images/carousel_02.webp
+    3 - public/images/carousel_03.webp
+    4 - public/images/carousel_04.webp
+    5 - public/images/carousel_05.webp
 
 ---
 
@@ -191,7 +191,7 @@ Mandatory in the form:
 > FAÇA SEU CRÉDITO AGORA
 
 Ilustre com a imagens na pasta:
-    - dist/images/vn_promotora_vida_first.web
+    - public/images/vn_promotora_vida_first.web
 
 ---
 
@@ -216,7 +216,7 @@ Ilustre com a imagens na pasta:
 > GARANTIR MINHA PRÉ-DIGITAÇÃO
 
 Ilustre com a imagens na pasta:
-    - dist/images/vn_promotora_vida_section_last.webp
+    - public/images/vn_promotora_vida_section_last.webp
 
 ---
 
@@ -250,5 +250,5 @@ Ilustre com a imagens na pasta:
 
 
 Ilustre com a logo no rodapé na pasta:
-    - dist/images/vn_promotora_vida_nova_logo_white_footer.webp
+    - public/images/vn_promotora_vida_nova_logo_white_footer.webp
 

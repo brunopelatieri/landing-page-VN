@@ -13,7 +13,9 @@ export default defineConfig({
       },
     },
   },
-  // Se o site rodar em subpasta, ajuste o base abaixo:
+  // Ficheiros em `public/` são servidos na raiz do site (dev) e copiados para a raiz de `dist/` (build).
+  // Nos componentes use `publicPath("images/...")` em `src/utils/publicPath.js` — não use o prefixo "public/" na URL.
+  // Se o site rodar em subpasta, ajuste o base:
   // base: '/subpasta/',
   base: '/',
 })

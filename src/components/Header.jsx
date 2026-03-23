@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { publicPath } from "../utils/publicPath.js";
 
 export default function Header() {
   return (
@@ -22,7 +23,7 @@ export default function Header() {
           style={{ display: "flex", lineHeight: 0, textDecoration: "none" }}
         >
           <img
-            src="dist/images/vn_promotora_vida_nova_logo._top.webp"
+            src={publicPath("images/vn_promotora_vida_nova_logo._top.webp")}
             alt="VN Promotora"
             style={{ height: 46 }}
           />

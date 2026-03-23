@@ -1,9 +1,10 @@
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
+import { publicPath } from "./utils/publicPath.js";
 
 const G = "#0a4d2c";
 
-const IMG_THANKS = "dist/images/vn_promotora_vida_section_tanks.webp";
+const IMG_THANKS = publicPath("images/vn_promotora_vida_section_tanks.webp");
 
 export default function ObrigadoCLT() {
   const css = `
