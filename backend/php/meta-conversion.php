@@ -21,8 +21,17 @@ if (!is_array($body)) {
     $body = [];
 }
 
-$token = getenv("META_CAPI_TOKEN");
-$pixelEnv = getenv("META_PIXEL_ID");
+$config = [];
+$configPath = __DIR__ . "/config.php";
+if (file_exists($configPath)) {
+    $loaded = include $configPath;
+    if (is_array($loaded)) {
+        $config = $loaded;
+    }
+}
+
+$token = getenv("META_CAPI_TOKEN") ?: ($config["META_CAPI_TOKEN"] ?? null);
+$pixelEnv = getenv("META_PIXEL_ID") ?: ($config["META_PIXEL_ID"] ?? null);
 $pixelId = isset($body["pixelId"]) ? $body["pixelId"] : ($pixelEnv ? $pixelEnv : "933858032944864");
 
 if (!$token) {

@@ -1,0 +1,12 @@
+<?php
+/**
+ * Hostinger/cPanel:
+ * 1) Copie para `config.php` na mesma pasta (`/public_html/api/config.php`)
+ * 2) Preencha o token
+ * 3) Mantenha o `.htaccess` em `/api` para bloquear acesso externo ao config
+ */
+return [
+    "META_PIXEL_ID" => "933858032944864",
+    "META_CAPI_TOKEN" => "COLE_AQUI_SEU_TOKEN",
+];
+
