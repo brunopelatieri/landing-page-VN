@@ -13,6 +13,10 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import "react-datepicker/dist/react-datepicker.css";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import { publicPath } from "./utils/publicPath.js";
@@ -112,6 +116,22 @@ function validateCPF(cpf) {
   return r === parseInt(cpf[10]);
 }
 
+function isFutureDate(date) {
+  const today = new Date();
+  return date > new Date(today.getFullYear(), today.getMonth(), today.getDate());
+}
+
+function isAtLeast18Years(date) {
+  const today = new Date();
+  const minBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+  return date <= minBirthDate;
+}
+
+function getMaxBirthDate() {
+  const today = new Date();
+  return new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+}
+
 /* ─── CAROUSEL ─── */
 function Carousel({ height }) {
   const [slide, setSlide] = useState(0);
@@ -125,7 +145,7 @@ function Carousel({ height }) {
   }, []);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: height || 280, overflow: "hidden" }}>
+    <div style={{ position: "relative", width: "100%", height: height || 280, overflow: "hidden", bottom: -5, }}>
       {CAROUSEL_IMAGES.map((src, i) => (
         <img
           key={src}
@@ -206,7 +226,7 @@ function FaqItem({ q, a }) {
 function MultiStepFormCLT() {
   const navigate = useNavigate();
   const [step, setStep]           = useState(1);
-  const [form, setForm]           = useState({ nome: "", email: "", celular: "", cpf: "" });
+  const [form, setForm]           = useState({ nome: "", email: "", celular: "", cpf: "", dataNascimento: null });
   const [sel, setSel]             = useState({ situacao: "", historico: "", situacaoHoje: "" });
   const [errors, setErrors]       = useState({});
   const [loading, setLoading]     = useState(false);
@@ -233,6 +253,13 @@ function MultiStepFormCLT() {
 
   const submit = async () => {
     const e = {};
+    if (!form.dataNascimento) {
+      e.dataNascimento = "Informe sua data de nascimento";
+    } else if (isFutureDate(form.dataNascimento)) {
+      e.dataNascimento = "A data de nascimento não pode ser futura";
+    } else if (!isAtLeast18Years(form.dataNascimento)) {
+      e.dataNascimento = "Você precisa ter 18 anos ou mais";
+    }
     if (!sel.situacao)    e.situacao    = "Selecione uma opção";
     if (!sel.historico)   e.historico   = "Selecione uma opção";
     if (!sel.situacaoHoje) e.situacaoHoje = "Selecione sua situação atual";
@@ -245,6 +272,7 @@ function MultiStepFormCLT() {
         body: JSON.stringify({
           formName: "formCLT",
           ...form,
+          dataNascimento: form.dataNascimento ? format(form.dataNascimento, "yyyy-MM-dd") : "",
           tipo_pagina: "credito-consignado-clt",
           situacao_clt: sel.situacao,
           historico_consignado_clt: sel.historico,
@@ -400,6 +428,30 @@ function MultiStepFormCLT() {
           </div>
         ) : (
           <div>
+            <div style={{ marginBottom: 22 }}>
+              <label style={{ display: "block", fontSize: 15, fontWeight: 800, color: G, marginBottom: 7 }}>
+                Informe sua data de nascimento *
+              </label>
+              <DatePicker
+                selected={form.dataNascimento}
+                onChange={(date) => setF("dataNascimento", date)}
+                dateFormat="dd/MM/yyyy"
+                locale={ptBR}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                maxDate={getMaxBirthDate()}
+                placeholderText="DD/MM/AAAA"
+                required
+                isClearable
+                wrapperClassName="dob-datepicker-wrapper"
+                className={errors.dataNascimento ? "dob-datepicker-input dob-datepicker-input-error" : "dob-datepicker-input"}
+                popperPlacement="bottom-start"
+              />
+              {errors.dataNascimento && (
+                <p style={{ color: "#dc2626", fontSize: 13, marginTop: 5, fontWeight: 700 }}>⚠ {errors.dataNascimento}</p>
+              )}
+            </div>
             <RadioGroup label="Descreva sua situação atual:" optKey="situacao"    options={SITUACOES} />
             <RadioGroup label="Você já pegou consignado CLT antes?" optKey="historico"  options={HISTORICO} />
             <RadioGroup label="Qual a sua situação hoje?"           optKey="situacaoHoje" options={SITUACAO_HOJE} />
@@ -443,6 +495,21 @@ export default function VNPromotoraCLT() {
       50%      { box-shadow: 0 0 0 14px rgba(34,197,94,0);  }
     }
     .pulse { animation: pulse 2s infinite; }
+
+    .dob-datepicker-wrapper { width: 100%; }
+    .dob-datepicker-input {
+      width: 100%;
+      padding: 15px;
+      border: 2.5px solid #d1d5db;
+      border-radius: 13px;
+      font-size: 17px;
+      font-family: 'Nunito', sans-serif;
+      outline: none;
+      color: #111;
+      transition: border .18s;
+    }
+    .dob-datepicker-input:focus { border-color: ${GA}; }
+    .dob-datepicker-input-error { border-color: #dc2626; }
 
     /* HOW (CLT) — imagem crédito-9 no rodapé; margem/padding inferiores 0 */
     .how-section-img-wrap {
@@ -504,7 +571,8 @@ export default function VNPromotoraCLT() {
         display: grid !important; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
 
       .why-section { padding: 64px 0 !important; }
-      .why-inner   { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
+      .why-inner   { max-width: 1100px; margin: 0 auto; padding: 0 0px; }
+      .why-inner.desktop-only   { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
       .why-grid    { display: grid !important; grid-template-columns: 1fr 1fr; gap: 14px; }
 
       .form-section-outer { padding-bottom: 64px !important; }
@@ -590,7 +658,7 @@ export default function VNPromotoraCLT() {
 
       {/* ════════ HERO ════════ */}
       <section style={{ background: G, overflow: "hidden" }}>
-        <div className="hero-grid" style={{ position: "relative" }}>
+        <div className="why-inner hero-grid" style={{ position: "relative" }}>
           {/* Left */}
           <div
             className="hero-left"
@@ -744,7 +812,7 @@ export default function VNPromotoraCLT() {
 
       {/* ════════ FORM ════════ */}
       <section className="form-section-outer" style={{ background: G, paddingBottom: 34 }} id="form-anchor-clt">
-        <div className="form-title-wrap" style={{ padding: "22px 14px 18px", textAlign: "center" }}>
+        <div className="form-title-wrap" style={{ padding: "22px 60px 18px", textAlign: "center" }}>
           <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "clamp(19px, 2.5vw, 28px)", fontWeight: 900, color: "#fff" }}>
             Preencha o formulário abaixo
           </h2>

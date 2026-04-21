@@ -195,6 +195,10 @@ function MultiStepForm() {
       "De 66 a 70 anos",
       "De 71 a 76 anos",
     ]);
+    const qualifiedLoanHistory = new Set([
+      "Entre 6 e 11 meses",
+      "Há mais de 1 ano (Já paguei mais de 12 parcelas)",
+    ]);
     const qualifiedSituations = new Set([
       "Tenho margem livre e quero contratar agora",
       "Tenho empréstimos antigos (mais de 1 ano) e quero renovar",
@@ -204,6 +208,7 @@ function MultiStepForm() {
     const isQualified =
       qualifiedBenefits.has(sel.beneficio) &&
       qualifiedAges.has(sel.idade) &&
+      qualifiedLoanHistory.has(sel.historico) &&
       qualifiedSituations.has(sel.situacao);
 
     setLoading(true);
@@ -480,7 +485,8 @@ export default function VNPromotora() {
 
       /* WHY */
       .why-section { padding: 64px 0 !important; }
-      .why-inner   { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
+      .why-inner   { max-width: 1100px; margin: 0 auto; padding: 0 0px; }
+      .why-inner.desktop-only   { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
       .why-grid    { display: grid !important; grid-template-columns: 1fr 1fr; gap: 14px; }
 
       /* FORM */
@@ -571,7 +577,7 @@ export default function VNPromotora() {
 
       {/* ════════ HERO ════════ */}
       <section className="hero-section" style={{ background: G, overflow: "hidden" }}>
-        <div className="hero-grid" style={{ position: "relative" }}>
+        <div className="why-inner hero-grid" style={{ position: "relative" }}>
 
           {/* Left: headline + CTA */}
           <div
@@ -589,8 +595,7 @@ export default function VNPromotora() {
               marginBottom: 16, textShadow: "0 2px 10px rgba(0,0,0,.4)",
             }}>
               Crédito Consignado INSS<br />
-              <span style={{ color: GA }}>Fácil e Seguro.</span><br />
-              Sem Complicação!
+              <span style={{ color: GA }}>Fácil e Seguro.</span>
             </h1>
             <p style={{
               fontSize: "clamp(14px, 1.4vw, 17px)",
@@ -715,7 +720,7 @@ export default function VNPromotora() {
       {/* ════════ FORM ════════ */}
       <section className="form-section-outer" style={{ background: G, paddingBottom: 34 }} id="form-anchor">
         {/* Title */}
-        <div className="form-title-wrap" style={{ padding: "22px 14px 18px", textAlign: "center" }}>
+        <div className="form-title-wrap" style={{ padding: "22px 60px 18px", textAlign: "center" }}>
           <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "clamp(19px, 2.5vw, 28px)", fontWeight: 900, color: "#fff" }}>
             Preencha o formulário abaixo
           </h2>

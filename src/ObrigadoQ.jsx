@@ -6,7 +6,7 @@ import { publicPath } from "./utils/publicPath.js";
 const G = "#0a4d2c";
 const GA = "#22c55e";
 const WHATSAPP_URL =
-  "https://wa.me/557999343719?text=Ol%C3%A1!%20Quero%20saber%20se%20tenho%20direito%20ao%20cr%C3%A9dito%20consignado%20INSS.";
+  "https://wa.me/557999037332?text=Ol%C3%A1!%20Quero%20saber%20se%20tenho%20direito%20ao%20cr%C3%A9dito%20consignado%20INSS.";
 const IMG_THANKS = publicPath("images/vn_promotora_vida_section_tanks.webp");
 
 export default function ObrigadoQ() {
