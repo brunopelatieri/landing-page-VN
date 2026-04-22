@@ -1,13 +1,41 @@
+import { useEffect, useRef } from "react";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import { publicPath } from "./utils/publicPath.js";
 
 const G = "#0a4d2c";
 const GA = "#22c55e";
+const GM = "#1a7a45";
+
+const WHATSAPP_URL =
+  "https://wa.me/5579999203817?text=Fiz%20meu%20cadastro%20e%20quero%20saber%20mais%20sobre%20cr%C3%A9dito%20consignado%20para%20Servidores%20SIAPE";
+
+const REDIRECT_MS = 5000;
 
 const IMG_THANKS = publicPath("images/vn_promotora_vida_section_tanks.webp");
 
 export default function ObrigadoSIAPE() {
+  const redirectTimerRef = useRef(null);
+
+  useEffect(() => {
+    redirectTimerRef.current = window.setTimeout(() => {
+      window.location.href = WHATSAPP_URL;
+    }, REDIRECT_MS);
+    return () => {
+      if (redirectTimerRef.current != null) {
+        clearTimeout(redirectTimerRef.current);
+        redirectTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const cancelAutoRedirect = () => {
+    if (redirectTimerRef.current != null) {
+      clearTimeout(redirectTimerRef.current);
+      redirectTimerRef.current = null;
+    }
+  };
+
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Nunito:wght@400;600;700;800&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -96,11 +124,67 @@ export default function ObrigadoSIAPE() {
       color: ${GA};
       font-weight: 900;
     }
-    .siape-support {
+    .siape-thanks-box li strong {
+      color: ${G};
+      font-weight: 800;
+    }
+    .siape-progress-block {
+      width: 100%;
+      max-width: 420px;
+      text-align: left;
+    }
+    .siape-progress-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      color: ${G};
+      letter-spacing: 0.4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .siape-progress-track {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(10, 77, 44, 0.12);
+    }
+    .siape-progress-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, ${GM} 0%, ${GA} 100%);
+      border-radius: 999px;
+      transform-origin: left center;
+      animation: siapeProgressDeplete ${REDIRECT_MS}ms linear forwards;
+    }
+    @keyframes siapeProgressDeplete {
+      from { transform: scaleX(1); }
+      to { transform: scaleX(0); }
+    }
+    .siape-cta-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 17px 22px;
+      background: ${GA};
+      color: #fff !important;
+      font-family: 'Montserrat', sans-serif;
       font-size: 15px;
-      font-weight: 600;
-      color: #6b7280;
-      line-height: 1.5;
+      font-weight: 900;
+      text-decoration: none;
+      border-radius: 50px;
+      letter-spacing: 0.4px;
+      text-align: center;
+      line-height: 1.35;
+      box-shadow: 0 4px 18px rgba(34, 197, 94, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .siape-cta-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(34, 197, 94, 0.45);
     }
     .siape-img-wrap {
       margin-top: auto;
@@ -144,24 +228,38 @@ export default function ObrigadoSIAPE() {
       <Header />
       <section className="siape-thanks-section">
         <div className="siape-thanks-inner">
-          <div className="siape-thanks-icon" aria-hidden>
-            ✅
-          </div>
-          <h1>Solicitação recebida com sucesso!</h1>
+          <h1>Obrigado! Sua solicitação foi recebida.</h1>
           <p className="siape-lead">
-            Obrigado! Nossa equipe especializada em Crédito Consignado SIAPE já recebeu sua solicitação e entrará em contato em breve com as melhores condições disponíveis para você.
+            Nossa equipe especializada em Crédito Consignado SIAPE já está processando seus dados. Aguarde um instante... Você será
+            redirecionado automaticamente em 5 segundos para o nosso WhatsApp de atendimento exclusivo para Servidores Federais.
           </p>
           <div className="siape-thanks-box">
-            <h2>📋 O que acontece agora?</h2>
+            <h2>Próximos passos</h2>
             <ul>
-              <li>Nosso especialista analisará seu perfil</li>
-              <li>Você receberá uma proposta personalizada</li>
-              <li>Todo o processo é gratuito e sem compromisso</li>
+              <li>
+                <strong>Análise Imediata:</strong> Nosso especialista iniciará a análise do seu perfil agora mesmo.
+              </li>
+              <li>
+                <strong>Proposta no Zap:</strong> Você receberá as melhores condições diretamente na conversa.
+              </li>
+              <li>
+                <strong>Segurança Total:</strong> Todo o processo é gratuito, seguro e sem compromisso.
+              </li>
             </ul>
           </div>
-          <p className="siape-support">
-            Atendimento especializado em Crédito Consignado para Servidores Federais SIAPE
-          </p>
+          <div className="siape-progress-block" aria-live="polite">
+            <p className="siape-progress-label">Redirecionando em 5 segundos</p>
+            <div className="siape-progress-track">
+              <div className="siape-progress-fill" />
+            </div>
+          </div>
+          <a
+            className="siape-cta-link"
+            href={WHATSAPP_URL}
+            onClick={cancelAutoRedirect}
+          >
+            QUERO SER ATENDIDO AGORA
+          </a>
           <div className="siape-img-wrap">
             <img src={IMG_THANKS} alt="Obrigado — VN Promotora" />
           </div>

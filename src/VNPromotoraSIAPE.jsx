@@ -27,7 +27,7 @@ const VANTAGENS = [
   "✅ Prazo de até 96 meses para pagar",
   "✅ Aprovação mesmo com nome sujo no Serasa",
   "✅ Contratação 100% online e pelo celular",
-  "✅ Dinheiro na conta em até 1 dia útil",
+  "✅ Dinheiro na conta em algumas horas",
   "✅ Portabilidade com troco disponível",
 ];
 
@@ -95,11 +95,11 @@ const MODALIDADES = [
 ];
 
 const CONDICOES = [
-  { label: "Taxa máxima:", valor: "2/3 dos créditos bancários pessoais" },
+  { label: "Taxa máxima:", valor: "De 2 a 3 vezes menor que os créditos bancários pessoais" },
   { label: "Prazo máximo:", valor: "Até 96 meses (8 anos)" },
   { label: "Margem p/ empréstimo:", valor: "35% da remuneração líquida" },
-  { label: "Margem p/ cartão:", valor: "5% da remuneração líquida" },
-  { label: "Aprovação:", valor: "Em até 1 dia útil" },
+  { label: "Margem p/ cartão:", valor: "Até 10% em 2 cartões (consignado/benefício), 5% cada." },
+  { label: "Aprovação:", valor: "Em algumas horas" },
   { label: "Consulta Serasa:", valor: "Não realizada" },
 ];
 
@@ -378,7 +378,7 @@ export default function VNPromotoraSIAPE() {
                 fontWeight: 600,
               }}
             >
-              Empréstimo Consignado SIAPE com desconto direto no contracheque, parcelas fixas e aprovação em até 1 dia útil. Sem consulta ao Serasa.
+              Empréstimo Consignado SIAPE com desconto direto no contracheque, parcelas fixas e aprovação em algumas horas. Sem consulta ao Serasa.
             </p>
             <a href="#form-anchor" className="pulse" style={{ ...btnGreen, width: "auto", alignSelf: "flex-start", padding: "16px 28px" }}>
               Simular grátis agora →
